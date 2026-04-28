@@ -1,116 +1,43 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
-    <title>PORTAL TES KECERMATAN - Persona Research & Consulting</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>PORTAL TES - Persona Research</title>
     <style>
-        :root { --navy: #0b2340; --gold: #d4a017; --gray: #f1f5f9; }
-        body { font-family: 'Inter', sans-serif; background: #e2e8f0; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .container { width: 90%; max-width: 500px; background: #fff; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-top: 6px solid var(--navy); text-align: center; }
-        h1 { font-size: 20px; color: var(--navy); margin-bottom: 5px; }
-        p { color: #64748b; font-size: 14px; margin-bottom: 25px; }
-        
-        /* Form Styling */
-        #authSection input { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid var(--gray); border-radius: 8px; box-sizing: border-box; text-align: center; font-size: 16px; }
-        .btn { width: 100%; padding: 14px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; text-transform: uppercase; margin-bottom: 10px; display: block; text-decoration: none; }
-        .btn-login { background: var(--navy); color: #fff; }
-        .btn-menu { background: var(--gray); color: var(--navy); border: 1px solid #cbd5e1; }
-        .btn-menu:hover { background: var(--gold); color: white; }
-
-        #menuSection { display: none; }
-        .status-msg { font-size: 12px; margin-top: 10px; color: #c0392b; font-weight: bold; }
+        body{font-family:sans-serif;background:#e2e8f0;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0}
+        .box{background:#fff;padding:30px;border-radius:12px;box-shadow:0 10px 20px rgba(0,0,0,0.1);text-align:center;width:90%;max-width:400px;border-top:6px solid #0b2340}
+        input{width:100%;padding:12px;margin:10px 0;border:2px solid #ddd;border-radius:8px;box-sizing:border-box;text-align:center;font-size:16px}
+        .btn{display:block;background:#0b2340;color:#fff;padding:12px;margin:10px 0;border-radius:8px;text-decoration:none;font-weight:bold;cursor:pointer}
+        .btn-menu{background:#f1f5f9;color:#0b2340;border:1px solid #cbd5e1;margin-bottom:8px}
+        .btn-menu:hover{background:#d4a017;color:#fff}
     </style>
 </head>
 <body>
-
-<div class="container">
-    <header>
-        <h1>PERSONA PORTAL</h1>
-        <p>Persona Research & Consulting</p>
-    </header>
-
-    <div id="authSection">
-        <input type="password" id="passInput" placeholder="Masukkan Password Akses" />
-        <button class="btn btn-login" onclick="validateAccess()">Masuk Sistem</button>
-        <div id="errorMsg" class="status-msg"></div>
+    <div class="box" id="auth">
+        <h2>PORTAL AKSES</h2>
+        <p style="font-size:13px;color:#666">Masukkan Password Akses</p>
+        <input type="password" id="pw" placeholder="Password">
+        <button class="btn" style="width:100%;border:none" onclick="go()">MASUK SISTEM</button>
     </div>
 
-    <div id="menuSection">
+    <div class="box" id="menu" style="display:none">
+        <h2>MENU UTAMA</h2>
         <a href="simbol_4.html" class="btn btn-menu">1. Tes Kecermatan Simbol</a>
         <a href="mono_7.html" class="btn btn-menu">2. Tes Kecermatan Ikon Emoji</a>
         <a href="mono_2.html" class="btn btn-menu">3. Tes Kecermatan Gambar Khusus</a>
-        <p style="margin-top: 20px; font-size: 11px;">Sisa Masa Berlaku: <span id="expiryDays"></span> Hari</p>
     </div>
-</div>
 
-<script>
-    const CONFIG = {
-        pass: "persona05",
-        expiryDays: 7,
-        maxDevices: 3
-    };
-
-    function validateAccess() {
-        const input = document.getElementById('passInput').value;
-        const error = document.getElementById('errorMsg');
-        
-        // 1. Cek Password
-        if (input !== CONFIG.pass) {
-            error.innerText = "Password Salah!";
-            return;
-        }
-
-        // 2. Cek Limit Perangkat (Simulasi Fingerprint via LocalStorage)
-        let deviceID = localStorage.getItem('persona_device_id');
-        let registeredDevices = JSON.parse(localStorage.getItem('registered_devices') || "[]");
-
-        if (!deviceID) {
-            if (registeredDevices.length >= CONFIG.maxDevices) {
-                error.innerText = "Akses Ditolak: Limit 3 Perangkat Terpenuhi.";
-                return;
+    <script>
+        function go(){
+            const pass = document.getElementById('pw').value;
+            if(pass === 'persona05'){
+                document.getElementById('auth').style.display = 'none';
+                document.getElementById('menu').style.display = 'block';
+            } else {
+                alert('Password Salah!');
             }
-            // Daftarkan perangkat baru
-            deviceID = 'DEV-' + Math.random().toString(36).substr(2, 9);
-            localStorage.setItem('persona_device_id', deviceID);
-            registeredDevices.push(deviceID);
-            localStorage.setItem('registered_devices', JSON.stringify(registeredDevices));
         }
-
-        // 3. Cek Masa Berlaku (7 Hari)
-        let startDate = localStorage.getItem('persona_start_date');
-        const now = new Date().getTime();
-
-        if (!startDate) {
-            localStorage.setItem('persona_start_date', now);
-            startDate = now;
-        }
-
-        const diffTime = now - startDate;
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-        if (diffDays > CONFIG.expiryDays) {
-            error.innerText = "Masa berlaku akses telah habis (7 Hari).";
-            return;
-        }
-
-        // Jika semua lolos
-        showMenu(CONFIG.expiryDays - diffDays + 1);
-    }
-
-    function showMenu(daysLeft) {
-        document.getElementById('authSection').style.display = 'none';
-        document.getElementById('menuSection').style.display = 'block';
-        document.getElementById('expiryDays').innerText = daysLeft;
-    }
-
-    // Auto-login jika session masih valid
-    window.onload = () => {
-        if (localStorage.getItem('persona_device_id') && localStorage.getItem('persona_start_date')) {
-            validateAccess();
-        }
-    }
-</script>
-
+    </script>
 </body>
 </html>
